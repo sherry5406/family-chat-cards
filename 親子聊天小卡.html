@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>親子聊天小卡</title>
+  <style>
+    :root { --ink:#24324a; --muted:#62708a; --cream:#fffaf0; --paper:#fff; --coral:#f47864; --coral-dark:#d95e4c; --sky:#dff3f5; --yellow:#ffd86a; --line:#e8e2d7; --mint:#dff1df; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:linear-gradient(135deg,#fff7e8 0%,#e9f8f5 100%); font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif; }
+    button { font:inherit; cursor:pointer; }
+    .wrap { max-width:1040px; margin:auto; padding:28px 20px 48px; }
+    header { text-align:center; margin-bottom:22px; }
+    h1 { margin:0; font-size:clamp(1.8rem,5vw,2.7rem); letter-spacing:.04em; }
+    header p { color:var(--muted); margin:8px 0 0; }
+    .tabs { display:flex; justify-content:center; gap:8px; margin:0 auto 20px; }
+    .tab { border:2px solid transparent; background:rgba(255,255,255,.7); color:var(--muted); padding:10px 16px; border-radius:999px; font-weight:700; }
+    .tab.active { background:var(--coral); color:#fff; box-shadow:0 4px 0 var(--coral-dark); transform:translateY(-2px); }
+    .panel { background:rgba(255,255,255,.9); border:1px solid rgba(255,255,255,.9); border-radius:26px; padding:clamp(18px,4vw,32px); box-shadow:0 10px 35px rgba(65,77,84,.12); }
+    .panel[hidden] { display:none; }
+    .intro { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; }
+    h2 { margin:0 0 5px; font-size:1.4rem; }
+    .intro p { margin:0; color:var(--muted); }
+    .date { background:var(--sky); border-radius:14px; padding:9px 12px; white-space:nowrap; font-weight:700; font-size:.9rem; }
+    .cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .question { position:relative; min-height:115px; padding:18px 16px 16px 57px; border:2px solid var(--line); border-radius:19px; background:var(--paper); display:flex; flex-direction:column; justify-content:space-between; transition:transform .15s, box-shadow .15s, border-color .15s; }
+    .question:hover { transform:translateY(-2px); box-shadow:0 8px 18px rgba(48,57,73,.1); }
+    .number { position:absolute; top:17px; left:14px; width:30px; height:30px; border-radius:50%; background:var(--yellow); display:grid; place-items:center; font-size:.86rem; font-weight:800; }
+    .qtext { margin:0; line-height:1.6; font-weight:700; }
+    .done { align-self:flex-end; margin-top:12px; padding:5px 10px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:999px; font-size:.82rem; }
+    .question.done-card { background:#f3fbf1; border-color:#b8dcb8; }
+    .question.done-card .done { background:var(--mint); color:#35633b; border-color:transparent; }
+    .actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:25px; }
+    .button { padding:11px 17px; border-radius:12px; border:0; font-weight:800; }
+    .primary { background:var(--coral); color:#fff; box-shadow:0 4px 0 var(--coral-dark); }
+    .primary:active { transform:translateY(3px); box-shadow:0 1px 0 var(--coral-dark); }
+    .secondary { background:var(--sky); color:var(--ink); }
+    .counter { text-align:center; margin:18px 0 0; color:var(--muted); font-size:.92rem; }
+    .picker-head { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:12px; }
+    .pick-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; max-height:520px; overflow:auto; padding:4px; }
+    .pick { width:100%; text-align:left; border:2px solid var(--line); background:#fff; color:var(--ink); padding:12px; border-radius:14px; line-height:1.45; }
+    .pick.selected { border-color:var(--coral); background:#fff0ec; }
+    .pick .tiny { display:block; color:var(--muted); font-size:.8rem; margin-bottom:3px; }
+    .empty { grid-column:1/-1; text-align:center; padding:30px 10px; color:var(--muted); }
+    footer { text-align:center; color:var(--muted); font-size:.86rem; margin-top:18px; }
+    @media (max-width:620px) { .wrap{padding:20px 12px 34px}.intro,.picker-head{align-items:flex-start;flex-direction:column}.cards,.pick-grid{grid-template-columns:1fr}.date{padding:7px 10px}.question{min-height:104px}.pick-grid{max-height:none} }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header><h1>🌈 親子聊天小卡</h1><p>每天十分鐘，聽見彼此的小世界</p></header>
+    <nav class="tabs" aria-label="問題模式"><button class="tab active" data-tab="child">孩子分享今天</button><button class="tab" data-tab="parent">孩子問問爸媽</button></nav>
+
+    <section class="panel" id="child-panel">
+      <div class="intro"><div><h2>今天的 10 張小卡</h2><p>輪流選一題說說看；不想回答時，也可以說「跳過」。</p></div><div class="date" id="today"></div></div>
+      <div class="cards" id="daily-cards"></div>
+      <div class="actions"><button class="button primary" id="new-daily">🎲 重新抽今天的題目</button><button class="button secondary" id="clear-done">把完成記號清掉</button></div>
+      <p class="counter" id="daily-count"></p>
+    </section>
+
+    <section class="panel" id="parent-panel" hidden>
+      <div class="picker-head"><div><h2>我想問爸媽</h2><p>從題庫挑最多 10 題，按「開始聊聊」就會變成今晚的小卡。</p></div><strong id="selected-count">已選 0 / 10</strong></div>
+      <div class="pick-grid" id="parent-picker"></div>
+      <div class="actions"><button class="button primary" id="start-parent">✨ 開始聊聊</button><button class="button secondary" id="clear-picks">清除選擇</button></div>
+      <div class="cards" id="parent-cards" hidden></div>
+    </section>
+    <footer>小提醒：沒有標準答案，認真聽對方說，就是最棒的回答。</footer>
+  </main>
+  <script>
+    const childQuestions = [
+      '今天在學校最開心的一件事是什麼？','今天有沒有哪一刻讓你覺得很好笑？','午餐吃了什麼？你會給它幾分？','今天和誰一起玩？玩了什麼？','今天學到一個新東西是什麼？','今天有沒有幫助到別人？','今天有沒有一件覺得有點難的事？','老師今天說了哪一句話，你還記得嗎？','下課時你最喜歡做什麼？','今天有沒有讓你覺得驕傲的地方？',
+      '今天有沒有遇到讓你不舒服的事？','如果今天可以重來一次，你想改變什麼？','今天最想帶回家分享的是什麼？','你今天畫了、寫了或做了什麼作品？','今天誰讓你覺得很貼心？','今天有沒有認識或更了解一位同學？','今天最像小偵探發現了什麼？','今天身體哪裡覺得最有力氣？','今天有沒有一件小事讓你擔心？','今天玩了哪個遊戲？規則是什麼？',
+      '今天你有沒有說「請、謝謝、對不起」？是在什麼時候？','今天教室裡最特別的聲音是什麼？','今天你最喜歡哪一堂課？為什麼？','今天有沒有想念爸爸媽媽的時候？','今天有沒有幫忙整理或收拾？','今天看到別人難過時，你怎麼想？','今天有沒有一個勇敢的時刻？','今天最想稱讚哪一個人？','今天在學校最想吃的點心是什麼？','今天有沒有一個問題想問老師？',
+      '今天你的心情像什麼天氣？','今天有沒有一件事情比昨天進步？','今天如果能當一天老師，你想教什麼？','今天有沒有做錯事？你從中學到什麼？','今天哪一個地方讓你覺得最舒服？','今天有沒有一件事想請爸媽幫忙？','今天聽到最有趣的故事是什麼？','今天你和朋友意見不同時，怎麼做？','今天有沒有等候很久？你怎麼讓自己不無聊？','今天你覺得自己像哪一種動物？為什麼？',
+      '今天發生的事，哪一件最值得記住？','今天有沒有想到一個好點子？','今天想對同學說什麼？','今天什麼時候最專心？','今天有沒有一個小秘密想分享？','今天如果用三個詞形容自己，會是哪三個？','今天想把哪一個瞬間拍成照片？','明天在學校最期待什麼？','明天想挑戰什麼小目標？','今天想給自己一個什麼稱讚？'
+    ];
+    const parentQuestions = [
+      '爸爸媽媽今天最開心的一件事是什麼？','你今天工作或家裡做了什麼？','你小時候最喜歡玩的遊戲是什麼？','你二年級的時候最喜歡哪一科？','你小時候有沒有怕過上學？','你今天有沒有遇到好笑的事？','你小時候最好的朋友是誰？你們會玩什麼？','你今天有沒有幫助到別人？','你小時候最喜歡吃什麼點心？','你今天覺得自己做得很好的地方是什麼？',
+      '你小時候最想養什麼動物？','你今天有沒有遇到困難？後來怎麼辦？','你小時候做過最勇敢的事是什麼？','你最喜歡哪一個節日？為什麼？','你小時候最喜歡聽誰講故事？','你今天心情像什麼天氣？','你小時候有沒有做錯事？學到什麼？','你最喜歡家裡的哪一個角落？','你今天最想感謝誰？為什麼？','你小時候有什麼很奇怪的夢想？',
+      '你最喜歡我身上的哪一個優點？','你小時候不會做、現在很會做的是什麼？','你今天學到什麼新事情？','你小時候的老師是什麼樣的人？','你最喜歡我們一起做什麼？','你小時候有沒有收藏過特別的東西？','你今天最想休息的時候是什麼時候？','你小時候最怕哪一種昆蟲或動物？','你想去世界上的哪一個地方？','你小時候最愛看什麼卡通或故事？',
+      '你今天有沒有覺得驕傲的時刻？','你小時候的生日怎麼過？','你有沒有一個希望我知道的小秘密？','你小時候會怎麼讓自己不難過？','你最喜歡哪一種天氣？','你今天吃到最好吃的是什麼？','你小時候最常跟家人做什麼？','你覺得什麼事情最需要耐心？','你小時候最想學會什麼？','你今天最想給自己什麼獎勵？',
+      '你小時候有沒有被誤會過？後來怎麼辦？','你現在最想學的新技能是什麼？','你小時候最愛穿什麼顏色？','你今天有沒有想起一件以前的事？','你覺得我們家最有趣的規矩是什麼？','你小時候會怎麼跟朋友和好？','你最喜歡收到什麼樣的稱讚？','你今天最想對我說的一句話是什麼？','你小時候最喜歡哪一本書或故事？','明天你最期待做什麼？'
+    ];
+    const $ = s => document.querySelector(s);
+    const dateKey = new Date().toLocaleDateString('sv-SE');
+    const storageKey = 'family-chat-daily-' + dateKey;
+    let daily = JSON.parse(localStorage.getItem(storageKey) || 'null') || shuffle([...Array(50).keys()]).slice(0,10);
+    let completed = JSON.parse(localStorage.getItem(storageKey + '-done') || '[]');
+    let picks = JSON.parse(localStorage.getItem('family-chat-parent-picks') || '[]');
+    function shuffle(a) { for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function saveDaily() { localStorage.setItem(storageKey,JSON.stringify(daily)); localStorage.setItem(storageKey+'-done',JSON.stringify(completed)); }
+    function card(question, n, mode, done=false) { return `<article class="question ${done?'done-card':''}"><span class="number">${n}</span><p class="qtext">${question}</p><button class="done" data-mode="${mode}" data-n="${n}" aria-pressed="${done}">${done?'✓ 聊過了':'聊完按這裡'}</button></article>`; }
+    function renderDaily() { $('#daily-cards').innerHTML=daily.map((i,n)=>card(childQuestions[i],n+1,'daily',completed.includes(n))).join(''); $('#daily-count').textContent=`今天已聊 ${completed.length} / 10 題`; }
+    function renderPicker() { $('#parent-picker').innerHTML=parentQuestions.map((q,i)=>`<button class="pick ${picks.includes(i)?'selected':''}" data-pick="${i}" aria-pressed="${picks.includes(i)}"><span class="tiny">問題 ${i+1}</span>${q}</button>`).join(''); $('#selected-count').textContent=`已選 ${picks.length} / 10`; localStorage.setItem('family-chat-parent-picks',JSON.stringify(picks)); }
+    function renderParentCards() { const shown=picks.length>0; $('#parent-cards').hidden=!shown; if(shown) $('#parent-cards').innerHTML=picks.map((i,n)=>card(parentQuestions[i],n+1,'parent')).join(''); }
+    $('#today').textContent=new Intl.DateTimeFormat('zh-TW',{month:'long',day:'numeric',weekday:'long'}).format(new Date());
+    renderDaily(); renderPicker();
+    document.addEventListener('click',e=>{
+      const tab=e.target.closest('[data-tab]'); if(tab){ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===tab)); $('#child-panel').hidden=tab.dataset.tab!=='child'; $('#parent-panel').hidden=tab.dataset.tab!=='parent'; }
+      const done=e.target.closest('.done'); if(done && done.dataset.mode==='daily'){ const n=Number(done.dataset.n)-1; completed=completed.includes(n)?completed.filter(x=>x!==n):[...completed,n]; saveDaily(); renderDaily(); }
+      const pick=e.target.closest('[data-pick]'); if(pick){ const i=Number(pick.dataset.pick); if(picks.includes(i)) picks=picks.filter(x=>x!==i); else if(picks.length<10) picks=[...picks,i]; else { alert('一次最多選 10 題喔！'); return; } renderPicker(); }
+    });
+    $('#new-daily').onclick=()=>{ if(confirm('要換成另一組今天的問題嗎？原本的完成記號會一起清除。')){ daily=shuffle([...Array(50).keys()]).slice(0,10); completed=[]; saveDaily(); renderDaily(); } };
+    $('#clear-done').onclick=()=>{ completed=[]; saveDaily(); renderDaily(); };
+    $('#clear-picks').onclick=()=>{ picks=[]; renderPicker(); renderParentCards(); };
+    $('#start-parent').onclick=()=>{ if(!picks.length){ alert('先選至少一題吧！'); return; } renderParentCards(); document.querySelector('#parent-cards').scrollIntoView({behavior:'smooth',block:'start'}); };
+  </script>
+</body>
+</html>
