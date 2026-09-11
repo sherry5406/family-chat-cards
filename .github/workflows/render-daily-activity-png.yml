@@ -1,0 +1,36 @@
+name: Render daily activity PNGs
+on:
+  push:
+    paths:
+      - '親子活動/**/01-*.svg'
+      - '親子活動/**/02-*.svg'
+      - '親子活動/**/03-*.svg'
+      - '親子活動/**/04-*.svg'
+      - '親子活動/**/05-*.svg'
+      - '親子活動/**/06-*.svg'
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render SVG to PNG
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin
+          for dir in 親子活動/*; do
+            [ -d "$dir" ] || continue
+            for svg in "$dir"/*.svg; do
+              [ -f "$svg" ] || continue
+              rsvg-convert -f png -o "${svg%.svg}.png" "$svg"
+            done
+          done
+      - name: Commit PNGs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add '親子活動/'
+          git diff --cached --quiet && exit 0
+          git commit -m 'chore: render daily activity PNGs'
+          git push
