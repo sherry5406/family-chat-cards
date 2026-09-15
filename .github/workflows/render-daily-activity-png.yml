@@ -23,7 +23,13 @@ jobs:
             [ -d "$dir" ] || continue
             for svg in "$dir"/*.svg; do
               [ -f "$svg" ] || continue
-              rsvg-convert -f png -o "${svg%.svg}.png" "$svg"
+              base="$(basename "$svg" .svg)"
+              case "$base" in
+                04) out="$dir/04-顏色魔法混色.png" ;;
+                06-) out="$dir/06-城堡積木設計師.png" ;;
+                *) out="$dir/$base.png" ;;
+              esac
+              rsvg-convert -f png -o "$out" "$svg"
             done
           done
       - name: Commit PNGs
