@@ -19,6 +19,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y librsvg2-bin
+          rm -f 親子活動/2026-09-15/*.png
           for dir in 親子活動/*; do
             [ -d "$dir" ] || continue
             for svg in "$dir"/*.svg; do
@@ -33,7 +34,6 @@ jobs:
               rsvg-convert -f png -o "$out" "$svg"
             done
           done
-          rm -f 親子活動/2026-09-15/05.png 親子活動/2026-09-15/04.png 親子活動/2026-09-15/06-.png
       - name: Commit PNGs
         run: |
           git config user.name 'github-actions[bot]'
