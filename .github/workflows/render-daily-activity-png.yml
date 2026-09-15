@@ -26,12 +26,14 @@ jobs:
               base="$(basename "$svg" .svg)"
               case "$base" in
                 04) out="$dir/04-顏色魔法混色.png" ;;
+                05) out="$dir/05-超級記憶翻翻樂.png" ;;
                 06-) out="$dir/06-城堡積木設計師.png" ;;
                 *) out="$dir/$base.png" ;;
               esac
               rsvg-convert -f png -o "$out" "$svg"
             done
           done
+          rm -f 親子活動/2026-09-15/05.png 親子活動/2026-09-15/04.png 親子活動/2026-09-15/06-.png
       - name: Commit PNGs
         run: |
           git config user.name 'github-actions[bot]'
