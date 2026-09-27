@@ -15,5 +15,16 @@ window.LESSON_DATA = {
     {"id":"s11","text":"Take out, please.","meaning":"請外帶。","words":[["Take","take","拿；帶","teɪk"],["out","out","出去；外帶","aʊt"],["please","please","請","pliːz"]]},
     {"id":"s12","text":"Call for food delivery.","meaning":"打電話叫外送。","words":[["Call","call","打電話","kɔːl"],["for","for","為了；要","fɔːr"],["food","food","食物","fuːd"],["delivery","de-LIV-er-y","外送","dɪˈlɪv.ər.i"]]}
   ],
+  "illustrationVocabulary": [
+    ["noodles","NOO-dles","麵；麵條","ˈnuː.dəlz","📖 課本插圖：麵碗"],
+    ["pizza","PEET-suh","披薩","ˈpiːt.sə","📖 課本插圖：披薩"],
+    ["menu","MEN-u","菜單","ˈmen.juː","📖 課本插圖：菜單"],
+    ["flyers","FLY-ers","宣傳單；傳單","ˈflaɪ.ərz","📖 課本插圖：桌上的宣傳單"],
+    ["telephone","TEL-e-phone","電話","ˈtel.ɪ.foʊn","📖 課本插圖：電話"],
+    ["fried rice","fried rice","炒飯","fraɪd raɪs","📖 課本插圖：炒飯"],
+    ["home-made food","home-made food","自製的食物","ˌhoʊmˈmeɪd fuːd","📖 課本對話：自己做的食物"],
+    ["eat out","eat out","出去吃；外食","iːt aʊt","📖 課本對話：出去吃"],
+    ["order in","order in","叫外送；在家點餐","ˈɔːr.dər ɪn","📖 課本對話：叫外送"]
+  ],
   "vocabulary": [["noodles","NOO-dles","麵；麵條","ˈnuː.dəlz"],["pizza","PEET-suh","披薩","ˈpiːt.sə"],["menu","MEN-u","菜單","ˈmen.juː"],["flyers","FLY-ers","宣傳單；傳單","ˈflaɪ.ərz"],["telephone","TEL-e-phone","電話","ˈtel.ɪ.foʊn"],["fried rice","fried rice","炒飯","fraɪd raɪs"],["delivery","de-LIV-er-y","外送","dɪˈlɪv.ər.i"],["cook","cook","煮飯","kʊk"],["tired","tired","累的","taɪərd"],["starving","STARV-ing","非常餓","ˈstɑːr.vɪŋ"],["order","OR-der","點餐；訂","ˈɔːr.dər"],["eat out","eat out","外食；出去吃","iːt aʊt"],["take out","take out","外帶","teɪk aʊt"]]
 };
