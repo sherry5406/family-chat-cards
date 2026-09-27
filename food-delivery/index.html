@@ -1,9 +1,43 @@
 <!doctype html>
 <html lang="zh-Hant">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Can We Order Food Delivery?｜小一英文學習</title><link rel="stylesheet" href="styles.css"></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can We Order Food Delivery?｜小一英文學習</title>
+<link rel="stylesheet" href="styles.css?v=3">
+</head>
 <body>
-<header class="hero"><div class="hero-inner"><div class="badge">🍕 小學一年級英文</div><h1>Can We Order Food Delivery?</h1><p>一起學「點餐、外送、外帶」英文！</p><div class="hero-actions"><button class="primary" id="playAllBtn">▶ 聽全部句子</button><button class="secondary" id="stopBtn">■ 停止</button></div></div></header>
-<main><section class="tip-card"><div class="tip-icon">💡</div><div><h2>小朋友怎麼學？</h2><p>看到 <b>🔊</b> 就可以聽英文。點一下單字，可以看到「發音＋中文意思」。</p></div></section>
-<nav class="tabs" aria-label="學習區"><button class="tab active" data-tab="sentences">💬 句子學習</button><button class="tab" data-tab="words">📚 單字小卡</button><button class="tab" data-tab="quiz">🎯 小測驗</button><button class="tab" data-tab="tips">🍔 課本重點</button></nav>
-<section id="sentences" class="panel active"></section><section id="words" class="panel"></section><section id="quiz" class="panel"></section><section id="tips" class="panel"><h2 class="section-title">🍔 課本重點</h2><div class="quiz-card"><h3>Let's eat out!</h3><p>我們出去吃吧！</p><h3>Let's order in!</h3><p>我們叫外送吧！</p><h3>For here or to go?</h3><p>內用還是外帶？</p><h3>Take out, please.</h3><p>請外帶。</p><h3>Call for food delivery.</h3><p>打電話叫外送。</p></div></section>
-</main><footer><p>🍔 English Time · 一次學一點，慢慢就會了！</p></footer><script src="lesson-data.js"></script><script src="app.js"></script></body></html>
+<header class="hero"><div class="hero-inner"><div class="badge">🍕 小學一年級英文</div><h1>Can We Order Food Delivery?</h1><p>一起學「點餐、外送、外帶」英文！</p><div class="hero-actions"><button type="button" class="primary" id="playAllBtn">▶ 聽全部句子</button><button type="button" class="secondary" id="stopBtn">■ 停止</button></div></div></header>
+<main>
+<section class="tip-card"><div class="tip-icon">💡</div><div><h2>小朋友怎麼學？</h2><p>看到 <b>🔊</b> 就可以聽英文。點一下單字，可以看到「發音＋中文意思」。</p></div></section>
+
+<nav class="tabs" aria-label="學習區">
+<button type="button" class="tab active" data-tab="sentences" onclick="switchTab('sentences')">💬 句子學習</button>
+<button type="button" class="tab" data-tab="words" onclick="switchTab('words')">📚 單字小卡</button>
+<button type="button" class="tab" data-tab="quiz" onclick="switchTab('quiz')">🎯 小測驗</button>
+<button type="button" class="tab" data-tab="tips" onclick="switchTab('tips')">🍔 課本重點</button>
+</nav>
+
+<section id="sentences" class="panel active"></section>
+<section id="words" class="panel"></section>
+<section id="quiz" class="panel"></section>
+<section id="tips" class="panel"><h2 class="section-title">🍔 課本重點</h2><div class="quiz-card"><h3>Let's eat out!</h3><p>我們出去吃吧！</p><h3>Let's order in!</h3><p>我們叫外送吧！</p><h3>For here or to go?</h3><p>內用還是外帶？</p><h3>Take out, please.</h3><p>請外帶。</p><h3>Call for food delivery.</h3><p>打電話叫外送。</p></div></section>
+</main>
+<footer><p>🍔 English Time · 一次學一點，慢慢就會了！</p></footer>
+
+<script>
+// 手機版分頁的保險機制：不依賴外部 app.js，也能切換四個分頁。
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === name);
+  });
+  document.querySelectorAll('.panel').forEach(function(panel) {
+    panel.classList.toggle('active', panel.id === name);
+  });
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+<script src="lesson-data.js?v=3"></script>
+<script src="app.js?v=3"></script>
+</body>
+</html>
