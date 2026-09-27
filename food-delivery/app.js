@@ -1,14 +1,143 @@
 const DATA = window.LESSON_DATA;
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
-function speak(text, rate=0.78){if(!('speechSynthesis' in window)){alert('這個瀏覽器沒有英文朗讀功能，請改用 Chrome / Edge / Safari。');return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate;u.pitch=1.05;speechSynthesis.speak(u);}
-function sentenceCard(item,index){const card=document.createElement('article');card.className='sentence-card';card.innerHTML=`<div class="sentence-top"><div><div class="sentence">${index+1}. ${item.text}</div><div class="meaning">🇹🇼 ${item.meaning}</div></div><button class="speak" title="聽整句" aria-label="聽整句">🔊</button></div><div class="words"></div>`;$('.speak',card).addEventListener('click',()=>speak(item.text,.72));const words=$('.words',card);item.words.forEach(([word,cue,meaning,ipa])=>{const b=document.createElement('button');b.className='word-btn';b.innerHTML=`<strong>${word}</strong><small>點我聽 🔊</small>`;b.addEventListener('click',()=>{speak(word,.68);let detail=$('.word-detail',card);if(!detail){detail=document.createElement('div');detail.className='word-detail';card.appendChild(detail);}detail.innerHTML=`<b>${word}</b>　發音：<span class="ipa">/${ipa}/</span>　｜　中文：${meaning}`;detail.classList.add('show');});words.appendChild(b);});return card;}
-function vocabCard([word,cue,meaning,ipa,note='']){const card=document.createElement('article');card.className='vocab-card';card.innerHTML=`<div class="wordline"><h3>${word}</h3><button class="mini">🔊</button></div><p><b>發音：</b><span class="ipa">/${ipa}/</span></p><p><b>中文：</b>${meaning}</p>${note?`<p><small>${note}</small></p>`:''}`;$('.mini',card).addEventListener('click',()=>speak(word,.68));return card;}
-function renderSentences(){const panel=$('#sentences');panel.innerHTML=`<h2 class="section-title">💬 一句一句學</h2><p>先看中文，再點 🔊 聽整句；想學單字就點單字。</p>`;DATA.sentences.forEach((s,i)=>panel.appendChild(sentenceCard(s,i)));}
-function renderWords(){const panel=$('#words');panel.innerHTML=`<h2 class="section-title">📚 單字小卡</h2><p>每張卡都有：英文、發音、中文意思，還可以按 🔊 聽。</p><h3 class="section-title" style="font-size:22px;margin-top:20px">🍕 課本插圖單字</h3><p>這些是你提供的課本圖片上直接標出的英文：<b>pizza、noodles、menu、flyers、telephone、fried rice</b>。</p>`;const grid=document.createElement('div');grid.className='vocab-grid';DATA.illustrationVocabulary.forEach(item=>grid.appendChild(vocabCard(item)));panel.appendChild(grid);const h=document.createElement('h3');h.className='section-title';h.style.cssText='font-size:22px;margin-top:26px';h.textContent='📖 課文重要單字';panel.appendChild(h);const grid2=document.createElement('div');grid2.className='vocab-grid';DATA.vocabulary.forEach(item=>grid2.appendChild(vocabCard(item)));panel.appendChild(grid2);}
-const quizItems=[['delivery','外送',['外送','披薩','菜單','電話']],['menu','菜單',['菜單','麵','炒飯','累']],['tired','累的',['餓的','累的','好的','快樂的']],['cook','煮飯',['吃飯','煮飯','睡覺','走路']],['pizza','披薩',['披薩','麵','電話','食物']],['starving','非常餓',['非常餓','非常累','很快','很冷']],['take out','外帶',['外帶','內用','回家','打電話']],['eat out','出去吃／外食',['出去吃／外食','煮飯','睡覺','上學']]];let quizIndex=0,score=0;
-function renderQuiz(){const panel=$('#quiz');panel.innerHTML=`<h2 class="section-title">🎯 小測驗</h2><div class="quiz-card"></div>`;showQuizQuestion();}
-function showQuizQuestion(){const card=$('#quiz .quiz-card');if(quizIndex>=quizItems.length){card.innerHTML=`<div class="score">🎉 完成！你答對 ${score} / ${quizItems.length} 題！</div><p>再玩一次，把英文記得更牢！</p><button class="primary" id="restart">再玩一次 🔄</button>`;$('#restart').onclick=()=>{quizIndex=0;score=0;showQuizQuestion()};return;}const [word,meaning,choices]=quizItems[quizIndex];const shuffled=[...choices].sort(()=>Math.random()-.5);card.innerHTML=`<div class="score">第 ${quizIndex+1} / ${quizItems.length} 題　｜　答對 ${score} 題</div><p class="quiz-question">「${word}」是什麼意思？</p><button class="speak" title="聽英文">🔊 聽 ${word}</button><div class="answers"></div><div class="feedback"></div>`;$('.speak',card).onclick=()=>speak(word,.68);const answers=$('.answers',card),feedback=$('.feedback',card);shuffled.forEach(choice=>{const b=document.createElement('button');b.className='answer';b.textContent=choice;b.onclick=()=>{if($('.answer.correct,.answer.wrong',answers))return;if(choice===meaning){b.classList.add('correct');feedback.textContent='✅ 答對了！太棒了！';score++;}else{b.classList.add('wrong');feedback.textContent=`❌ 再想想～答案是「${meaning}」`;}setTimeout(()=>{quizIndex++;showQuizQuestion()},800)};answers.appendChild(b);});}
-function renderPictures(){const panel=$('#pictures');panel.innerHTML=`<h2 class="section-title">🖼️ 課本圖片</h2><p>這是你提供的課本頁面，可以一邊看圖、一邊學英文。</p><div class="photo-grid"><div class="photo-card"><img src="assets/lesson-page-66.jpg" alt="課本第66頁"><p>📖 第 66 頁：Can We Order Food Delivery?</p></div><div class="photo-card"><img src="assets/lesson-page-67.jpg" alt="課本第67頁"><p>📖 第 67 頁：Let's eat out! / Let's order in!</p></div></div>`;}
-function setupTabs(){$$('.tab').forEach(tab=>{tab.onclick=()=>{$$('.tab').forEach(t=>t.classList.remove('active'));$$('.panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');$('#'+tab.dataset.tab).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});};});}
-$('#playAllBtn').onclick=()=>{speechSynthesis.cancel();DATA.sentences.forEach((s,i)=>setTimeout(()=>speak(s.text,.72),i*3000));};$('#stopBtn').onclick=()=>speechSynthesis.cancel();renderSentences();renderWords();renderQuiz();renderPictures();setupTabs();
+
+function speak(text, rate=0.78){
+  if(!('speechSynthesis' in window)){
+    alert('這個瀏覽器沒有英文朗讀功能，請改用 Chrome / Edge / Safari。');
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = rate;
+  u.pitch = 1.05;
+  speechSynthesis.speak(u);
+}
+
+function sentenceCard(item,index){
+  const card=document.createElement('article');
+  card.className='sentence-card';
+  card.innerHTML=`<div class="sentence-top"><div><div class="sentence">${index+1}. ${item.text}</div><div class="meaning">🇹🇼 ${item.meaning}</div></div><button class="speak" title="聽整句" aria-label="聽整句">🔊</button></div><div class="words"></div>`;
+  $('.speak',card).addEventListener('click',()=>speak(item.text,.72));
+  const words=$('.words',card);
+  item.words.forEach(([word,cue,meaning,ipa])=>{
+    const b=document.createElement('button');
+    b.className='word-btn';
+    b.innerHTML=`<strong>${word}</strong><small>點我聽 🔊</small>`;
+    b.addEventListener('click',()=>{
+      speak(word,.68);
+      let detail=$('.word-detail',card);
+      if(!detail){detail=document.createElement('div');detail.className='word-detail';card.appendChild(detail);}
+      detail.innerHTML=`<b>${word}</b>　發音：<span class="ipa">/${ipa}/</span>　｜　中文：${meaning}`;
+      detail.classList.add('show');
+    });
+    words.appendChild(b);
+  });
+  return card;
+}
+
+function vocabCard([word,cue,meaning,ipa,note='']){
+  const card=document.createElement('article');
+  card.className='vocab-card clickable-vocab';
+  card.setAttribute('role','button');
+  card.setAttribute('tabindex','0');
+  card.innerHTML=`<div class="wordline"><h3>${word}</h3><button class="mini" type="button">🔊</button></div><p><b>發音：</b><span class="ipa">/${ipa}/</span></p><p><b>中文：</b>${meaning}</p>${note?`<p><small>${note}</small></p>`:''}<div class="vocab-action">👆 點整張卡也可以聽發音</div>`;
+
+  const play=()=>{
+    speak(word,.68);
+    card.classList.add('playing');
+    setTimeout(()=>card.classList.remove('playing'),700);
+  };
+  $('.mini',card).addEventListener('click',(e)=>{e.stopPropagation();play();});
+  card.addEventListener('click',play);
+  card.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();play();}});
+  return card;
+}
+
+function renderSentences(){
+  const panel=$('#sentences');
+  panel.innerHTML=`<h2 class="section-title">💬 一句一句學</h2><p>先看中文，再點 🔊 聽整句；想學單字就點單字。</p>`;
+  DATA.sentences.forEach((s,i)=>panel.appendChild(sentenceCard(s,i)));
+}
+
+function renderWords(){
+  const panel=$('#words');
+  panel.innerHTML=`<h2 class="section-title">📚 單字小卡</h2><p>每張卡都有：英文、發音、中文意思。<b>現在整張小卡都可以點擊朗讀！</b></p><h3 class="section-title" style="font-size:22px;margin-top:20px">🍕 課本插圖單字</h3><p>這些是你提供的課本圖片上直接標出的英文：<b>pizza、noodles、menu、flyers、telephone、fried rice</b>。</p>`;
+  const grid=document.createElement('div');
+  grid.className='vocab-grid';
+  DATA.illustrationVocabulary.forEach(item=>grid.appendChild(vocabCard(item)));
+  panel.appendChild(grid);
+
+  const h=document.createElement('h3');
+  h.className='section-title';
+  h.style.cssText='font-size:22px;margin-top:26px';
+  h.textContent='📖 課文重要單字';
+  panel.appendChild(h);
+  const grid2=document.createElement('div');
+  grid2.className='vocab-grid';
+  DATA.vocabulary.forEach(item=>grid2.appendChild(vocabCard(item)));
+  panel.appendChild(grid2);
+}
+
+const quizItems=[['delivery','外送',['外送','披薩','菜單','電話']],['menu','菜單',['菜單','麵','炒飯','累']],['tired','累的',['餓的','累的','好的','快樂的']],['cook','煮飯',['吃飯','煮飯','睡覺','走路']],['pizza','披薩',['披薩','麵','電話','食物']],['starving','非常餓',['非常餓','非常累','很快','很冷']],['take out','外帶',['外帶','內用','回家','打電話']],['eat out','出去吃／外食',['出去吃／外食','煮飯','睡覺','上學']]];
+let quizIndex=0,score=0;
+
+function renderQuiz(){
+  const panel=$('#quiz');
+  panel.innerHTML=`<h2 class="section-title">🎯 小測驗</h2><div class="quiz-card"></div>`;
+  showQuizQuestion();
+}
+
+function showQuizQuestion(){
+  const card=$('#quiz .quiz-card');
+  if(quizIndex>=quizItems.length){
+    card.innerHTML=`<div class="score">🎉 完成！你答對 ${score} / ${quizItems.length} 題！</div><p>再玩一次，把英文記得更牢！</p><button class="primary" id="restart">再玩一次 🔄</button>`;
+    $('#restart').onclick=()=>{quizIndex=0;score=0;showQuizQuestion()};
+    return;
+  }
+  const [word,meaning,choices]=quizItems[quizIndex];
+  const shuffled=[...choices].sort(()=>Math.random()-.5);
+  card.innerHTML=`<div class="score">第 ${quizIndex+1} / ${quizItems.length} 題　｜　答對 ${score} 題</div><p class="quiz-question">「${word}」是什麼意思？</p><button class="speak" title="聽英文">🔊 聽 ${word}</button><div class="answers"></div><div class="feedback"></div>`;
+  $('.speak',card).onclick=()=>speak(word,.68);
+  const answers=$('.answers',card),feedback=$('.feedback',card);
+  shuffled.forEach(choice=>{
+    const b=document.createElement('button');b.className='answer';b.textContent=choice;
+    b.onclick=()=>{
+      if($('.answer.correct,.answer.wrong',answers))return;
+      if(choice===meaning){b.classList.add('correct');feedback.textContent='✅ 答對了！太棒了！';score++;}
+      else{b.classList.add('wrong');feedback.textContent=`❌ 再想想～答案是「${meaning}」`;}
+      setTimeout(()=>{quizIndex++;showQuizQuestion()},800);
+    };
+    answers.appendChild(b);
+  });
+}
+
+function renderPictures(){
+  const panel=$('#pictures');
+  panel.innerHTML=`<h2 class="section-title">🖼️ 課本圖片</h2><p>這是你提供的課本頁面，可以一邊看圖、一邊學英文。</p><div class="photo-grid"><div class="photo-card"><img src="assets/lesson-page-66.jpg" alt="課本第66頁"><p>📖 第 66 頁：Can We Order Food Delivery?</p></div><div class="photo-card"><img src="assets/lesson-page-67.jpg" alt="課本第67頁"><p>📖 第 67 頁：Let's eat out! / Let's order in!</p></div></div>`;
+}
+
+function setupTabs(){
+  $$('.tab').forEach(tab=>{
+    tab.onclick=()=>{
+      $$('.tab').forEach(t=>t.classList.remove('active'));
+      $$('.panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      $('#'+tab.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+  });
+}
+
+$('#playAllBtn').onclick=()=>{
+  speechSynthesis.cancel();
+  DATA.sentences.forEach((s,i)=>setTimeout(()=>speak(s.text,.72),i*3000));
+};
+$('#stopBtn').onclick=()=>speechSynthesis.cancel();
+
+renderSentences();
+renderWords();
+renderQuiz();
+renderPictures();
+setupTabs();
