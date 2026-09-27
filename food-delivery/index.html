@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Can We Order Food Delivery?｜小一英文學習</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="badge">🍕 小學一年級英文</div>
+      <h1>Can We Order Food Delivery?</h1>
+      <p>一起學「點餐、外送、外帶」英文！</p>
+      <div class="hero-actions">
+        <button class="primary" id="playAllBtn">▶ 聽全部句子</button>
+        <button class="secondary" id="stopBtn">■ 停止</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="tip-card"><div class="tip-icon">💡</div><div><h2>小朋友怎麼學？</h2><p>看到 <b>🔊</b> 就可以聽英文。點一下單字，可以看到「發音＋中文意思」。</p></div></section>
+    <nav class="tabs" aria-label="學習區"><button class="tab active" data-tab="sentences">💬 句子學習</button><button class="tab" data-tab="words">📚 單字小卡</button><button class="tab" data-tab="quiz">🎯 小測驗</button><button class="tab" data-tab="pictures">🖼️ 課本圖片</button></nav>
+    <section id="sentences" class="panel active"></section><section id="words" class="panel"></section><section id="quiz" class="panel"></section><section id="pictures" class="panel"></section>
+  </main>
+  <footer><p>🍔 English Time · 一次學一點，慢慢就會了！</p></footer>
+  <script src="lesson-data.js"></script><script src="app.js"></script>
+</body>
+</html>
